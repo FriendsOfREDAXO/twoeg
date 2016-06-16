@@ -159,4 +159,4 @@ or you can use the Twig_Environment::setCache method through twÖg:
 Credits
 -------
 * [Twig template engine](http://twig.sensiolabs.org/) by Sensio Labs
-* [twÖg redaxo addon]()
+* [twÖg redaxo addon](https://github.com/FriendsOfREDAXO/twoeg)
