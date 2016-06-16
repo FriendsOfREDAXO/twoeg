@@ -1,0 +1,34 @@
+<html>
+	<head>
+		<title>twÖg Test</title>
+	</head>
+	<body>
+		<h1>{{ headline }}</h1>
+		
+		<p>
+			{{ 'translate:twoeg_title'|translate }}
+		</p>
+
+		<p>
+			{{ 'twoeg_test'|msg('some', 'variable') }}
+		</p>
+
+        <p>
+            Server name: {{ rex__getServerName() }}
+        </p>
+
+        <ul>
+        {% for item in rex_clang__getAll() %}
+            <li>
+                {{ item.id }}: {{ item.code }} ({{ item.name}})
+            </li>
+        {% endfor %}
+        </ul>
+
+        {% if rex__getUser()|hasRole('admin') %}
+        <p>
+            User login name: {{ rex__getUser()|getValue('login') }}
+        </p>
+        {% endif %}
+	</body>
+</html>

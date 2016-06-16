@@ -1,0 +1,7 @@
+# addon:twoeg de_de
+
+twoeg_navigation = twÖg
+
+twoeg_title = twÖg - Twig template engine für Redaxo
+twoeg_readme = Readme
+twoeg_test = twÖg - with »{0}« of »{1}«

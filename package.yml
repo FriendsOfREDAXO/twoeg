@@ -1,0 +1,13 @@
+package: twoeg
+version: '0.1'
+author: Thomas Goellner
+supportpage: www.redaxo.org/de/forum/
+
+page:
+    title: translate:navigation
+    perm: admin
+    subpages:
+        readme: { title: translate:readme }
+
+requires:
+    redaxo: '>=5.0.0-beta2'
