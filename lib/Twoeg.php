@@ -22,7 +22,7 @@ class Twoeg
 	{
 		foreach($attributes as $var => $value)
 		{
-			$method = 'set' . camel_case($var);
+			$method = 'set' . ucfirst(camel_case($var));
 
 			if(method_exists($this, $method))
 			{
@@ -229,9 +229,19 @@ class Twoeg
 		return $this->getFolder('template');
 	}
 
+	public function setTemplateFolder($folder)
+	{
+		$this->template_folder = $folder;
+	}
+
 	public function getCacheFolder()
 	{
 		return $this->getFolder('cache');
+	}
+
+	public function setCacheFolder($folder)
+	{
+		$this->cache_folder = $folder;
 	}
 
 	protected function getFolder($type)
