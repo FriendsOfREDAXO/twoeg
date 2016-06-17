@@ -1,5 +1,5 @@
 package: twoeg
-version: '0.1'
+version: '0.2'
 author: Friends Of REDAXO
 supportpage: https://github.com/FriendsOfREDAXO/twoeg
 
@@ -8,6 +8,8 @@ page:
     perm: admin
     subpages:
         readme: { title: translate:readme }
+        documentation: { title: translate:documentation }
+        changelog: { title: translate:changelog }
 
 requires:
     redaxo: '>=5.0.0-beta2'

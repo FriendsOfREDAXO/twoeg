@@ -5,6 +5,7 @@ use Twig_Loader_Filesystem;
 use Twig_Environment;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
+use Twig_Extension;
 
 use rex_addon;
 use rex_dir;
@@ -17,6 +18,10 @@ class Twoeg
 
 	protected $template_folder = null;
 	protected $cache_folder = null;
+
+	protected $twig_extension = [];
+	protected $twig_filter = [];
+	protected $twig_function = [];
 
 	public function __construct(array $attributes = [])
 	{
@@ -43,7 +48,10 @@ class Twoeg
 				{
 					if($twig = $this->initTwigFunctions($twig))
 					{
-						$this->twig = $twig;
+						if($twig = $this->initTwigExtensions($twig))
+						{
+							$this->twig = $twig;
+						}
 					}
 				}
 			}
@@ -144,7 +152,22 @@ class Twoeg
 			return null;
 		});
 
-		return $filters;
+		return array_merge($filters, $this->twig_filter);
+	}
+
+	protected function setTwigFilter($filters)
+	{
+		$filters = !is_array($filters) ? [$filters] : $filters;
+
+		foreach($filters as $filter)
+		{
+			if($filter instanceof Twig_SimpleFilter)
+			{
+				$this->twig_filter[] = $filter;
+			}
+		}
+
+		return $this->twig_filter;
 	}
 
 	protected function initTwigFunctions(Twig_Environment $twig)
@@ -181,7 +204,7 @@ class Twoeg
 		$functions = [];
 
 		// rex_i18n::msg
-		$functions[] = new Twig_SimpleFunction('rex*', function ($name, $arguments = []) {
+		$functions[] = new Twig_SimpleFunction('rex*', function ($name) {
 			$class = 'rex' . $name;
 
 			# rex::getUser()→hasPerm(‘myperm[]’)
@@ -196,6 +219,8 @@ class Twoeg
 				{
 					if(method_exists($class, $method))
 					{
+						$arguments = func_get_args() > 1 ? array_slice(func_get_args(), 1) : [];
+
 						return call_user_func_array(array($class, $method), $arguments);
 					}
 				}
@@ -204,7 +229,77 @@ class Twoeg
 			return '';
 		});
 
-		return $functions;
+		return array_merge($functions, $this->twig_function);
+	}
+
+	protected function setTwigFunction($functions)
+	{
+		$functions = !is_array($functions) ? [$functions] : $functions;
+
+		foreach($functions as $function)
+		{
+			if($function instanceof Twig_SimpleFunction)
+			{
+				$this->twig_function[] = $function;
+			}
+		}
+
+		return $this->twig_function;
+	}
+
+	protected function initTwigExtensions(Twig_Environment $twig)
+	{
+		foreach($this->getTwigExtensions() as $extension)
+		{
+			$this->addTwigExtension($extension, $twig);
+		}
+
+		return $twig;
+	}
+
+	public function addTwigExtension(Twig_Extension $extension, Twig_Environment $twig = null)
+	{
+		if(empty($twig))
+		{
+			if(!empty($this->twig))
+			{
+				$this->twig->addExtension($extension);
+				return $this->twig;
+			}
+		}
+		else
+		{
+			$twig->addExtension($extension);
+			return $twig;
+		}
+
+		return false;
+	}
+
+	protected function getTwigExtensions()
+	{
+		$extensions = [];
+
+		// Twig extensions
+		// $extensions[] = new \Twig_Extensions_Extension_Intl();
+
+		return array_merge($extensions, $this->twig_extension);
+	}
+
+	protected function setTwigExtension($extensions)
+	{
+		$extensions = !is_array($extensions) ? [$extensions] : $extensions;
+
+		foreach($extensions as $extension)
+		{
+			$extension = ucfirst(strtolower((string) $extension));
+			if(class_exists($extension = "\\Twig_Extensions_Extension_" . $extension))
+			{
+				$this->twig_extension[] = new $extension;
+			}
+		}
+
+		return $this->twig_extension;
 	}
 
 	public function __call($method, $args) {
@@ -231,6 +326,13 @@ class Twoeg
 
 	public function setTemplateFolder($folder)
 	{
+		$default_folder = $this->getTemplateFolder();
+		if($folder != $default_folder)
+		{
+			$folder = (array) $folder;
+			$folder[] = $default_folder;
+		}
+
 		$this->template_folder = $folder;
 	}
 
@@ -297,15 +399,15 @@ class Twoeg
 		return rex_addon::get('twoeg');
 	}
 
-	public static function render($template, array $variables = [])
+	public static function render($template, array $variables = [], $settings = [])
 	{
-		$twoeg = new self;
+		$twoeg = new self($settings);
 		$template = $twoeg->loadTemplate($template);
 		return $template->render($variables);
 	}
 
-	public static function out($template, array $variables = [])
+	public static function out($template, array $variables = [], $settings = [])
 	{
-		echo self::render($template, $variables);
+		echo self::render($template, $variables, $settings);
 	}
 }
