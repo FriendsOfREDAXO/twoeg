@@ -286,6 +286,7 @@ class Twig_Tests_TemplateTest extends PHPUnit_Framework_TestCase
             'null' => null,
             '1' => 1,
             'bar' => true,
+            'foo' => true,
             '09' => '09',
             '+4' => '+4',
         );
@@ -314,6 +315,7 @@ class Twig_Tests_TemplateTest extends PHPUnit_Framework_TestCase
             array(true,  1,         1.0),
             array(true,  null,      'null'),
             array(true,  true,      'bar'),
+            array(true,  true,      'foo'),
             array(true,  '09',      '09'),
             array(true,  '+4',      '+4'),
         );
@@ -483,6 +485,7 @@ class Twig_TemplateArrayAccessObject implements ArrayAccess
         'null' => null,
         '1' => 1,
         'bar' => true,
+        'foo' => true,
         '09' => '09',
         '+4' => '+4',
     );
@@ -515,6 +518,7 @@ class Twig_TemplateMagicPropertyObject
         'null' => null,
         '1' => 1,
         'bar' => true,
+        'foo' => true,
         '09' => '09',
         '+4' => '+4',
     );
@@ -546,6 +550,7 @@ class Twig_TemplatePropertyObject
     public $zero = 0;
     public $null = null;
     public $bar = true;
+    public $foo = true;
 
     protected $protected = 'protected';
 }
@@ -622,6 +627,11 @@ class Twig_TemplateMethodObject
         return true;
     }
 
+    public function hasFoo()
+    {
+        return true;
+    }
+
     protected function getProtected()
     {
         return 'protected';
@@ -672,7 +682,7 @@ class Twig_TemplateMagicMethodExceptionObject
 
 class CExtDisablingNodeVisitor implements Twig_NodeVisitorInterface
 {
-    public function enterNode(Twig_NodeInterface $node, Twig_Environment $env)
+    public function enterNode(Twig_Node $node, Twig_Environment $env)
     {
         if ($node instanceof Twig_Node_Expression_GetAttr) {
             $node->setAttribute('disable_c_ext', true);
@@ -681,7 +691,7 @@ class CExtDisablingNodeVisitor implements Twig_NodeVisitorInterface
         return $node;
     }
 
-    public function leaveNode(Twig_NodeInterface $node, Twig_Environment $env)
+    public function leaveNode(Twig_Node $node, Twig_Environment $env)
     {
         return $node;
     }

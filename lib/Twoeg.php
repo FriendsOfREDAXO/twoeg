@@ -27,7 +27,7 @@ class Twoeg
 	{
 		foreach($attributes as $var => $value)
 		{
-			$method = 'set' . ucfirst(camel_case($var));
+			$method = 'set' . ucfirst($this->camelCase($var));
 
 			if(method_exists($this, $method))
 			{
@@ -36,6 +36,17 @@ class Twoeg
 		}
 
 		$twig = $this->getTwig();
+	}
+
+	public function camelCase($string)
+	{
+		$string = preg_replace('/[^a-z0-9]/', ' ', $string);
+		$string = preg_replace('/ {2,}/', ' ', $string);
+		$string = strtolower($string);
+		$string = ucwords($string);
+		$string = str_replace(' ', '', $string);
+		$string = lcfirst($string);
+		return $string;
 	}
 
 	protected function getTwig()
@@ -306,11 +317,11 @@ class Twoeg
 
 		if(method_exists($this, $method))
 		{
-			return call_user_func_array(array($this, $method), $args);	
+			return call_user_func_array(array($this, $method), $args);
 		}
 		else if($this->twig instanceof Twig_Environment)
 		{
-			return call_user_func_array(array($this->twig, $method), $args);	
+			return call_user_func_array(array($this->twig, $method), $args);
 		}
 		else
 		{
