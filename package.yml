@@ -12,4 +12,4 @@ page:
         changelog: { title: translate:changelog }
 
 requires:
-    redaxo: '>=5.0.0-beta2'
+    redaxo: '>=5.1.0'
